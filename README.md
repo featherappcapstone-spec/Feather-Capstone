@@ -73,9 +73,22 @@ feather/
 
 ## Documentation
 
-- [API Contracts](docs/api-contracts.md)
-- [Architecture](docs/architecture.md)
-- [Runbook](docs/runbook.md)
+### Core Documentation
+- [API Contracts](docs/api-contracts.md) - API specifications and endpoints
+- [Architecture](docs/architecture.md) - System architecture and design
+- [Runbook](docs/runbook.md) - Operations and troubleshooting guide
+
+### Deployment
+- [Quick Deploy Guide](docs/deployment/QUICK_DEPLOY.md) - Fast deployment to Vercel
+- [Vercel Deployment](docs/deployment/VERCEL_DEPLOYMENT.md) - Detailed Vercel deployment guide
+- [GitHub Setup](docs/deployment/GITHUB_SETUP.md) - Repository setup instructions
+
+### Team Resources
+- [Team Onboarding Guide](docs/team/TEAM_ONBOARDING_GUIDE.md) - Complete team guide
+- [Team Report](docs/team/TEAM_REPORT.md) - Project overview for team members
+
+### Technical
+- [Technical Summary](docs/technical/TECHNICAL_SUMMARY.md) - Technical architecture details
 
 ## Contributing
 
