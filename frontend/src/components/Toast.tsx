@@ -92,10 +92,11 @@ export const Toast = ({ id, type, title, message, duration = 5000, onClose }: To
             <button
               onClick={handleClose}
               className={cn(
-                'inline-flex rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2',
+                'inline-flex p-1 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2',
                 config.textColor,
-                'hover:opacity-75'
+                'hover:opacity-75 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors'
               )}
+              aria-label="Close"
             >
               <X className="h-4 w-4" />
             </button>

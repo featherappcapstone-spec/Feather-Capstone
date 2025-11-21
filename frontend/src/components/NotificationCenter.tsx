@@ -230,7 +230,14 @@ export const NotificationCenter = () => {
             {/* Footer */}
             {notifications.length > 0 && (
               <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-                <button className="w-full text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">
+                <button 
+                  onClick={() => {
+                    // Navigate to alerts page or show all notifications
+                    setIsOpen(false)
+                    window.location.href = '/alerts'
+                  }}
+                  className="w-full px-4 py-2 text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 transition-colors rounded-md hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
                   View all notifications
                 </button>
               </div>

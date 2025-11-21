@@ -82,7 +82,8 @@ export const Modal = ({
               {closable && (
                 <button
                   onClick={onClose}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                  aria-label="Close"
                 >
                   <X className="h-6 w-6" />
                 </button>
@@ -141,7 +142,7 @@ export const ConfirmModal = ({
         <div className="flex justify-end space-x-3">
           <button
             onClick={onClose}
-            className="btn-outline"
+            className="btn-outline px-4 py-2"
           >
             {cancelText}
           </button>
@@ -150,7 +151,7 @@ export const ConfirmModal = ({
               onConfirm()
               onClose()
             }}
-            className={`btn ${buttonClasses[type]}`}
+            className={`btn px-4 py-2 ${buttonClasses[type]}`}
           >
             {confirmText}
           </button>
@@ -199,7 +200,7 @@ export const AlertModal = ({
         <div className="flex justify-end">
           <button
             onClick={onClose}
-            className="btn-primary"
+            className="btn-primary px-4 py-2"
           >
             OK
           </button>

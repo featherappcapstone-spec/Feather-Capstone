@@ -53,7 +53,8 @@ export const AlertForm = ({ onSubmit, onCancel, isLoading }: AlertFormProps) => 
         </h3>
         <button
           onClick={onCancel}
-          className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+          aria-label="Close"
         >
           <X className="h-5 w-5" />
         </button>

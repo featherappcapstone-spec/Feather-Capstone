@@ -60,7 +60,7 @@ interface MarketOverviewData {
 }
 
 export const MarketOverview = () => {
-  const [selectedTab, setSelectedTab] = useState<'indices' | 'sectors' | 'movers' | 'global' | 'crypto' | 'commodities'>('indices')
+  // Removed other market types - only keeping indices
   const [timeframe, setTimeframe] = useState<'1D' | '1W' | '1M' | '3M' | '1Y'>('1D')
 
   // Mock market data
@@ -455,39 +455,9 @@ export const MarketOverview = () => {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
-        {[
-          { key: 'indices', label: 'Indices', icon: BarChart3 },
-          { key: 'sectors', label: 'Sectors', icon: Target },
-          { key: 'movers', label: 'Movers', icon: Activity },
-          { key: 'global', label: 'Global', icon: Globe },
-          { key: 'crypto', label: 'Crypto', icon: Zap },
-          { key: 'commodities', label: 'Commodities', icon: DollarSign }
-        ].map(({ key, label, icon: Icon }) => (
-          <button
-            key={key}
-            onClick={() => setSelectedTab(key as any)}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              selectedTab === key
-                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-            }`}
-          >
-            <Icon className="h-4 w-4" />
-            <span>{label}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Content */}
+      {/* Content - Only showing Indices */}
       <div>
-        {selectedTab === 'indices' && renderIndices()}
-        {selectedTab === 'sectors' && renderSectors()}
-        {selectedTab === 'movers' && renderMarketMovers()}
-        {selectedTab === 'global' && renderGlobalMarkets()}
-        {selectedTab === 'crypto' && renderCrypto()}
-        {selectedTab === 'commodities' && renderCommodities()}
+        {renderIndices()}
       </div>
     </div>
   )

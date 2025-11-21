@@ -450,44 +450,8 @@ export const AIRecommendations = () => {
         </div>
       </div>
 
-      {/* Market Insights */}
-      <div className="card p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Market Insights
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <h4 className="font-medium text-gray-900 dark:text-white mb-2">Key Themes</h4>
-            <ul className="space-y-1">
-              {aiData.marketInsights.keyThemes.map((theme, index) => (
-                <li key={index} className="text-sm text-gray-600 dark:text-gray-400">
-                  • {theme}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-medium text-gray-900 dark:text-white mb-2">Sector Rotation</h4>
-            <ul className="space-y-1">
-              {aiData.marketInsights.sectorRotation.map((sector, index) => (
-                <li key={index} className="text-sm text-gray-600 dark:text-gray-400">
-                  • {sector}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-medium text-gray-900 dark:text-white mb-2">Risk Factors</h4>
-            <ul className="space-y-1">
-              {aiData.marketInsights.riskFactors.map((risk, index) => (
-                <li key={index} className="text-sm text-gray-600 dark:text-gray-400">
-                  • {risk}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
+      {/* Market Insights - Simplified to 1-2 features */}
+      {/* Commented out detailed insights - keeping only summary cards and recommendations list */}
 
       {/* Recommendations */}
       <div className="space-y-4">
@@ -538,61 +502,7 @@ export const AIRecommendations = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <h4 className="font-medium text-gray-900 dark:text-white mb-2">Key Factors</h4>
-                <ul className="space-y-1">
-                  {rec.keyFactors.map((factor, index) => (
-                    <li key={index} className="text-sm text-gray-600 dark:text-gray-400">
-                      • {factor}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-900 dark:text-white mb-2">Risks</h4>
-                <ul className="space-y-1">
-                  {rec.risks.map((risk, index) => (
-                    <li key={index} className="text-sm text-gray-600 dark:text-gray-400">
-                      • {risk}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-900 dark:text-white mb-2">Opportunities</h4>
-                <ul className="space-y-1">
-                  {rec.opportunities.map((opportunity, index) => (
-                    <li key={index} className="text-sm text-gray-600 dark:text-gray-400">
-                      • {opportunity}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-center">
-                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Technical Score</div>
-                  <div className={`text-lg font-semibold ${getScoreColor(rec.technicalScore)}`}>
-                    {rec.technicalScore}/100
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Fundamental Score</div>
-                  <div className={`text-lg font-semibold ${getScoreColor(rec.fundamentalScore)}`}>
-                    {rec.fundamentalScore}/100
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Sentiment Score</div>
-                  <div className={`text-lg font-semibold ${getScoreColor(rec.sentimentScore)}`}>
-                    {rec.sentimentScore}/100
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* Simplified - removed detailed analysis sections */}
           </div>
         ))}
       </div>

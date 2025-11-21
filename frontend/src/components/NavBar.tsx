@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Sun, Moon, LogOut, User } from 'lucide-react'
 import { NotificationCenter } from './NotificationCenter'
@@ -16,11 +16,24 @@ export const NavBar = ({ user, onLogout }: NavBarProps) => {
   )
   const navigate = useNavigate()
 
+  useEffect(() => {
+    // Apply dark mode on mount
+    if (darkMode) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [])
+
   const toggleDarkMode = () => {
     const newDarkMode = !darkMode
     setDarkMode(newDarkMode)
     localStorage.setItem('darkMode', newDarkMode.toString())
-    document.documentElement.classList.toggle('dark', newDarkMode)
+    // Force update by removing and adding class
+    document.documentElement.classList.remove('dark')
+    if (newDarkMode) {
+      document.documentElement.classList.add('dark')
+    }
   }
 
   const handleLogout = () => {
@@ -32,17 +45,17 @@ export const NavBar = ({ user, onLogout }: NavBarProps) => {
     <nav className="fixed top-0 left-0 right-0 z-40 glass-effect shadow-lg border-b border-gray-200/50 dark:border-gray-700/50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center">
+          {/* Logo - Pushed to far left on desktop */}
+          <div className="flex items-center lg:-ml-2">
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/market')}
               className="flex items-center space-x-3 text-xl font-bold text-gray-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200"
             >
-              <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
+              <div className="flex items-center justify-center w-10 h-10 rounded-xl">
                 <img 
-                  src="/images/image001.png" 
+                  src="/images/image002.png" 
                   alt="Feather Logo" 
-                  className="w-6 h-6 object-contain"
+                  className="w-8 h-8 object-contain"
                   onError={(e) => {
                     // Fallback to emoji if image fails to load
                     const target = e.currentTarget as HTMLImageElement
@@ -72,7 +85,7 @@ export const NavBar = ({ user, onLogout }: NavBarProps) => {
             {/* Dark mode toggle */}
             <button
               onClick={toggleDarkMode}
-              className="p-2 text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400"
+              className="p-2 px-3 text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </button>
@@ -86,7 +99,7 @@ export const NavBar = ({ user, onLogout }: NavBarProps) => {
               
               <button
                 onClick={handleLogout}
-                className="flex items-center space-x-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                className="flex items-center space-x-1 px-3 py-2 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <LogOut className="h-4 w-4" />
                 <span>Logout</span>

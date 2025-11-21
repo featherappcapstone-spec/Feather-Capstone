@@ -3,7 +3,8 @@ import { Link, useLocation } from 'react-router-dom'
 import { NavBar } from './NavBar'
 import { Sidebar } from './Sidebar'
 import { useAuth } from '@/hooks/useAuth'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, TrendingUp, Sparkles, BarChart3, Shield, Search, LineChart, Newspaper, Bell } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 
 interface AppLayoutProps {
   children: React.ReactNode
@@ -11,22 +12,23 @@ interface AppLayoutProps {
 
 export const AppLayout = ({ children }: AppLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarHovered, setSidebarHovered] = useState(false)
   const location = useLocation()
   const { user, logout } = useAuth()
 
   const navigation = [
-    { name: 'Dashboard', href: '/', icon: '📊' },
-    { name: 'Market', href: '/market', icon: '📈' },
-    { name: 'Portfolio', href: '/portfolio', icon: '💼' },
-    { name: 'Recommendations', href: '/recommendations', icon: '🤖' },
-    { name: 'Charts', href: '/charts', icon: '📊' },
-    { name: 'Risk', href: '/risk', icon: '🛡️' },
-    { name: 'Backtesting', href: '/backtesting', icon: '🧪' },
-    { name: 'Screener', href: '/screener', icon: '🔍' },
-    { name: 'Analytics', href: '/analytics', icon: '📊' },
-    { name: 'Social', href: '/social', icon: '👥' },
-    { name: 'News', href: '/news', icon: '📰' },
-    { name: 'Alerts', href: '/alerts', icon: '🔔' },
+    // { name: 'Dashboard', href: '/', icon: Home }, // Commented out - keep for backburner
+    { name: 'Market', href: '/market', icon: TrendingUp },
+    // { name: 'Portfolio', href: '/portfolio', icon: Briefcase }, // Commented out - needs account info
+    { name: 'Recommendations', href: '/recommendations', icon: Sparkles },
+    { name: 'Charts', href: '/charts', icon: BarChart3 },
+    { name: 'Risk', href: '/risk', icon: Shield },
+    // { name: 'Backtesting', href: '/backtesting', icon: TestTube }, // Commented out - not needed for project
+    { name: 'Screener', href: '/screener', icon: Search },
+    { name: 'Analytics', href: '/analytics', icon: LineChart },
+    // { name: 'Social', href: '/social', icon: Users }, // Commented out - needs account management
+    { name: 'News', href: '/news', icon: Newspaper },
+    { name: 'Alerts', href: '/alerts', icon: Bell },
   ]
 
   return (
@@ -52,14 +54,13 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                  className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
                     location.pathname === item.href
                       ? 'bg-primary-100 text-primary-900 dark:bg-primary-900 dark:text-primary-100'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
                   }`}
                   onClick={() => setSidebarOpen(false)}
                 >
-                  <span className="mr-3 text-lg">{item.icon}</span>
                   {item.name}
                 </Link>
               ))}
@@ -67,13 +68,21 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
           </div>
         </div>
 
-        {/* Desktop sidebar */}
-        <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 lg:pt-16">
-          <Sidebar navigation={navigation} currentPath={location.pathname} />
+        {/* Desktop sidebar - Auto-collapse on hover */}
+        <div 
+          className="hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 lg:pt-16"
+          onMouseEnter={() => setSidebarHovered(true)}
+          onMouseLeave={() => setSidebarHovered(false)}
+        >
+          <Sidebar 
+            navigation={navigation} 
+            currentPath={location.pathname}
+            expanded={sidebarHovered}
+          />
         </div>
 
         {/* Main content */}
-        <div className="lg:pl-64 flex-1">
+        <div className="flex-1 lg:pl-16 transition-all duration-300">
           <main className="py-6">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               {children}
