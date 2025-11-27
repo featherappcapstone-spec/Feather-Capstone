@@ -51,19 +51,20 @@ export const NavBar = ({ user, onLogout }: NavBarProps) => {
           className="flex items-center space-x-1 text-xl font-bold text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200"
         >
           <div className="flex items-center justify-center w-10 h-10 rounded-xl">
-  {/* LIGHT MODE LOGO */}
+  {/* Light mode logo */}
   <img
-    src="/images/image002.png"
-    alt="Feather Logo Light"
-    className="w-8 h-8 object-contain dark:hidden"
+    src="/images/feather-logo-light.png"
+    alt="Feather"
+    className="h-8 w-auto dark:hidden"
   />
 
-  {/* DARK MODE LOGO */}
+  {/* Dark mode logo */}
   <img
-    src="/images/bird_darkmode.png"
-    alt="Feather Logo Dark"
-    className="w-8 h-8 object-contain hidden dark:block"
+    src="/images/feather-logo-dark.png"
+    alt="Feather"
+    className="h-8 w-auto hidden dark:block"
   />
+
 </div>
 
 
