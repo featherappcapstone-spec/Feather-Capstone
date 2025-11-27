@@ -1,23 +1,35 @@
 import { useState } from 'react'
-import { PriceChart } from '@/components/PriceChart'
 import { TickerSearch } from '@/components/TickerSearch'
+import { PriceChart } from '@/components/PriceChart'
+import { InteractiveChart } from '@/components/InteractiveChart'
+import { usePriceHistory } from '@/hooks/useHistory'
 
 export const ChartsPage = () => {
   const [selectedSymbol, setSelectedSymbol] = useState('AAPL')
 
-  return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Charts
-        </h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          View price charts for your favorite stocks
-        </p>
-      </div>
+  const { data: history, isLoading, error } = usePriceHistory(selectedSymbol, 60)
 
-      {/* Symbol Search */}
+  // Always work with a local candles array so we can safely handle "no data yet"
+  const candles = history?.items ?? []
+  const hasData = candles.length > 0
+
+  // Map backend -> InteractiveChart shape
+  const chartData = candles.map((candle) => ({
+    time: candle.timestamp,
+    price: candle.close,
+    volume: candle.volume,
+    high: candle.high,
+    low: candle.low,
+    open: candle.open,
+    close: candle.close,
+  }))
+
+  const last = hasData ? candles[candles.length - 1] : undefined
+  const first = hasData ? candles[0] : undefined
+
+  return (
+    <div className="space-y-6">
+      {/* Symbol selection */}
       <div className="card p-6">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
           Select Symbol
@@ -30,19 +42,58 @@ export const ChartsPage = () => {
         </div>
       </div>
 
-      {/* Price Chart - Katie's Graph */}
-      {selectedSymbol && (
-        <PriceChart 
-          symbol={selectedSymbol}
-          data={{
-            price: 150.25,
-            change: 2.45,
-            changePercent: 1.66,
-            volume: 45234567,
-            high: 152.30,
-            low: 148.90
-          }}
-        />
+      {/* Loading / error states */}
+      {isLoading && (
+        <div className="card p-6">
+          <p className="text-gray-500 dark:text-gray-400">
+            Loading price history…
+          </p>
+        </div>
+      )}
+
+      {error && (
+        <div className="card p-6">
+          <p className="text-red-500">
+            Failed to load history for {selectedSymbol}
+          </p>
+        </div>
+      )}
+
+      {/* Only show charts when we *actually* have candles */}
+      {hasData && last && first && (
+        <>
+          {/* Summary card: now fed from backend candles */}
+          <PriceChart
+            symbol={selectedSymbol}
+            data={{
+              price: last.close,
+              change: last.close - first.close,
+              changePercent: ((last.close - first.close) / first.close) * 100,
+              volume: last.volume,
+              high: Math.max(...candles.map((c) => c.high)),
+              low: Math.min(...candles.map((c) => c.low)),
+            }}
+            isLoading={isLoading}
+          />
+
+          {/* Real OHLCV chart with candles + indicators */}
+          <InteractiveChart
+            symbol={selectedSymbol}
+            data={chartData}
+            type="candlestick"
+            showIndicators={true}
+            showCrosshair={true}
+          />
+        </>
+      )}
+
+      {/* Optional: if not loading and no data, show a friendly message */}
+      {!isLoading && !error && !hasData && (
+        <div className="card p-6">
+          <p className="text-gray-500 dark:text-gray-400">
+            No history data available for {selectedSymbol}.
+          </p>
+        </div>
       )}
     </div>
   )

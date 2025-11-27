@@ -18,10 +18,32 @@ export interface LoginResponse {
 
 // Prediction types
 export interface Prediction {
+  // old fields (still there so other code compiles)
   deltaPct: number
   direction: 'up' | 'down'
-  confidence: number
+  confidence: number | null
+
+  // new fields from backend
+  targetPrice?: number       // maps predicted_price
+  horizonDays?: number       // maps horizon_days
 }
+
+
+// Price history types
+export interface PriceCandle {
+  timestamp: string
+  open: number
+  high: number
+  low: number
+  close: number
+  volume: number
+}
+
+export interface PriceHistoryResponse {
+  symbol: string
+  items: PriceCandle[]
+}
+
 
 export interface PredictionModel {
   type: string
@@ -35,6 +57,15 @@ export interface PredictionResponse {
   model: PredictionModel
 }
 
+// Quote types (NEW)
+export interface Quote {
+  ticker: string
+  current_price: number
+  change: number
+  percent_change: number
+  last_updated: string
+}
+
 // News types
 export interface NewsItem {
   id: string
@@ -43,7 +74,12 @@ export interface NewsItem {
   url: string
   sentiment: 'Positive' | 'Negative' | 'Neutral'
   sentimentScore: number
+
+  // Optional backend fields
+  source?: string
+  summary?: string
 }
+
 
 export interface NewsResponse {
   symbol?: string

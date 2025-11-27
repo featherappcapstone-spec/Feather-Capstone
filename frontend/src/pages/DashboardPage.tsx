@@ -17,11 +17,22 @@ import { FearGreedIndex } from '@/components/FearGreedIndex'
 import { MarketOverview } from '@/components/MarketOverview'
 import { PortfolioTracker } from '@/components/PortfolioTracker'
 import { AIRecommendations } from '@/components/AIRecommendations'
+import { usePriceHistory } from '@/hooks/useHistory'
+
 
 export const DashboardPage = () => {
   const [selectedSymbol, setSelectedSymbol] = useState('')
   const { data: prediction, isLoading: predictionLoading } = usePrediction(selectedSymbol)
   const { data: news, isLoading: newsLoading } = useGlobalNews(10)
+
+  const currentSymbol = selectedSymbol || 'SPY'  // default if nothing picked yet
+
+  const {
+    data: history,
+    isLoading: historyLoading,
+    error: historyError,
+  } = usePriceHistory(currentSymbol, 60)
+
 
   const handleSymbolSelect = (symbol: string) => {
     setSelectedSymbol(symbol)
@@ -139,18 +150,41 @@ export const DashboardPage = () => {
       <div>
         <SentimentAnalyzer symbol={selectedSymbol} />
       </div>
-
-      {/* Interactive Chart */}
+      
+      {/* Interactive Chart – real OHLCV */}
       {selectedSymbol && (
-        <div>
-          <InteractiveChart 
-            symbol={selectedSymbol}
-            type="line"
-            showIndicators={true}
-            showCrosshair={true}
-          />
+        <div className="space-y-4">
+          {historyLoading && (
+            <div className="card p-4">Loading price history…</div>
+          )}
+
+          {historyError && (
+            <div className="card p-4 text-red-600">
+              Failed to load price history.
+            </div>
+          )}
+
+          {history && (
+            <InteractiveChart
+              symbol={currentSymbol}
+              data={history.items.map(candle => ({
+                time: candle.timestamp,
+                price: candle.close,
+                volume: candle.volume,
+                high: candle.high,
+                low: candle.low,
+                open: candle.open,
+                close: candle.close,
+              }))}
+              type="candlestick"    // use real candles
+              height={400}
+              showIndicators={true}
+              showCrosshair={true}
+            />
+          )}
         </div>
       )}
+
 
       {/* Fear & Greed Index */}
       <div>
