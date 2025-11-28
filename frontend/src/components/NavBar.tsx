@@ -53,7 +53,7 @@ export const NavBar = ({ user, onLogout }: NavBarProps) => {
           <div className="flex items-center justify-center w-10 h-10 rounded-xl">
   {/* Light mode logo */}
   <img
-    src="/images/image002.png"
+    src="/images/bird_lightmode.png"
     alt="Feather"
     className="h-8 w-auto dark:hidden"
   />
