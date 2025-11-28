@@ -28,11 +28,8 @@ export const MarketPage = () => {
         </p>
       </div>
 
-      {/* Market Overview */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-          Market Overview
-        </h2>
+      {/* Market Overview (handles its own header + indices + tickers) */}
+      <section>
         <MarketOverview />
       </section>
 

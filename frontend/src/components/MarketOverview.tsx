@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { TrendingUp, TrendingDown, Activity, DollarSign, BarChart3, Globe, Zap, Target } from 'lucide-react'
+import { useState } from 'react'
+import { TrendingUp, TrendingDown, Activity } from 'lucide-react'
 
 interface MarketData {
   symbol: string
@@ -24,6 +24,7 @@ interface SectorData {
 }
 
 interface MarketOverviewData {
+  primaryTickers: MarketData[]
   indices: MarketData[]
   sectors: SectorData[]
   marketMovers: {
@@ -60,11 +61,79 @@ interface MarketOverviewData {
 }
 
 export const MarketOverview = () => {
-  // Removed other market types - only keeping indices
   const [timeframe, setTimeframe] = useState<'1D' | '1W' | '1M' | '3M' | '1Y'>('1D')
 
-  // Mock market data
   const marketData: MarketOverviewData = {
+    // MAIN 5 TICKERS ROW (AAPL, TSLA, MSFT, AMZN, GOOG)
+    primaryTickers: [
+      {
+        symbol: 'AAPL',
+        name: 'Apple Inc',
+        price: 175.25,
+        change: 2.45,
+        changePercent: 1.42,
+        volume: 85000000,
+        marketCap: 2800000000000,
+        high: 178.5,
+        low: 172.3,
+        open: 174.5,
+        previousClose: 172.8
+      },
+      {
+        symbol: 'TSLA',
+        name: 'Tesla Inc',
+        price: 285.75,
+        change: 15.3,
+        changePercent: 5.66,
+        volume: 55000000,
+        marketCap: 900000000000,
+        high: 290.25,
+        low: 275.5,
+        open: 278.45,
+        previousClose: 270.45
+      },
+      {
+        symbol: 'MSFT',
+        name: 'Microsoft Corp',
+        price: 345.1,
+        change: 4.8,
+        changePercent: 1.41,
+        volume: 32000000,
+        marketCap: 2600000000000,
+        high: 348.0,
+        low: 338.2,
+        open: 340.5,
+        previousClose: 340.3
+      },
+      {
+        symbol: 'AMZN',
+        name: 'Amazon.com Inc',
+        price: 151.33,
+        change: 3.83,
+        changePercent: 2.6,
+        volume: 51000000,
+        marketCap: 1550000000000,
+        high: 152.2,
+        low: 147.4,
+        open: 148.0,
+        previousClose: 147.5
+      },
+      {
+        symbol: 'GOOG',
+        name: 'Alphabet Inc (Google)',
+        price: 138.75,
+        change: 2.1,
+        changePercent: 1.54,
+        volume: 28000000,
+        marketCap: 1750000000000,
+        high: 140.2,
+        low: 135.8,
+        open: 136.9,
+        previousClose: 136.65
+      }
+    ],
+
+    // INDICES (order only controls display)
     indices: [
       {
         symbol: 'SPX',
@@ -76,8 +145,21 @@ export const MarketOverview = () => {
         marketCap: 0,
         high: 4530.25,
         low: 4480.15,
-        open: 4495.20,
-        previousClose: 4469.20
+        open: 4495.2,
+        previousClose: 4469.2
+      },
+      {
+        symbol: 'IXIC',
+        name: 'NASDAQ',
+        price: 14098.01,
+        change: 198.45,
+        changePercent: 1.43,
+        volume: 4250000000,
+        marketCap: 0,
+        high: 14125.6,
+        low: 13950.3,
+        open: 13980.25,
+        previousClose: 13899.56
       },
       {
         symbol: 'DJI',
@@ -88,22 +170,9 @@ export const MarketOverview = () => {
         volume: 2850000000,
         marketCap: 0,
         high: 35280.45,
-        low: 34850.30,
+        low: 34850.3,
         open: 34950.25,
         previousClose: 34799.38
-      },
-      {
-        symbol: 'IXIC',
-        name: 'NASDAQ',
-        price: 14098.01,
-        change: 198.45,
-        changePercent: 1.43,
-        volume: 4250000000,
-        marketCap: 0,
-        high: 14125.60,
-        low: 13950.30,
-        open: 13980.25,
-        previousClose: 13899.56
       },
       {
         symbol: 'RUT',
@@ -113,12 +182,14 @@ export const MarketOverview = () => {
         changePercent: 1.26,
         volume: 1850000000,
         marketCap: 0,
-        high: 1865.30,
-        low: 1835.20,
+        high: 1865.3,
+        low: 1835.2,
         open: 1840.25,
         previousClose: 1833.27
       }
     ],
+
+    // everything else unchanged
     sectors: [
       { name: 'Technology', change: 2.15, changePercent: 1.85, topGainers: ['NVDA', 'AMD', 'INTC'], topLosers: ['META', 'SNAP', 'TWTR'] },
       { name: 'Healthcare', change: 1.45, changePercent: 1.25, topGainers: ['JNJ', 'PFE', 'MRK'], topLosers: ['GILD', 'BIIB', 'REGN'] },
@@ -175,17 +246,14 @@ export const MarketOverview = () => {
     ]
   }
 
-  const getChangeColor = (change: number) => {
-    return change >= 0 ? 'text-green-600' : 'text-red-600'
-  }
+  const getChangeColor = (change: number) =>
+    change >= 0 ? 'text-green-600' : 'text-red-600'
 
-  const getChangeBg = (change: number) => {
-    return change >= 0 ? 'bg-green-100 dark:bg-green-900' : 'bg-red-100 dark:bg-red-900'
-  }
+  const getChangeBg = (change: number) =>
+    change >= 0 ? 'bg-green-100 dark:bg-green-900' : 'bg-red-100 dark:bg-red-900'
 
-  const getChangeIcon = (change: number) => {
-    return change >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />
-  }
+  const getChangeIcon = (change: number) =>
+    change >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />
 
   const formatNumber = (num: number) => {
     if (num >= 1000000000) return `${(num / 1000000000).toFixed(1)}B`
@@ -194,74 +262,86 @@ export const MarketOverview = () => {
     return num.toFixed(2)
   }
 
-  const renderIndices = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+// SMALLER, SUBTLE INDEX CARDS (TOP-RIGHT)
+const renderIndicesTop = () => (
+  <div className="flex justify-end">
+    <div className="grid grid-cols-[repeat(2,min-content)] gap-1">
       {marketData.indices.map((index) => (
-        <div key={index.symbol} className="card p-4">
-          <div className="flex items-center justify-between mb-2">
+        <div
+          key={index.symbol}
+          className="card p-2.5 max-w-[170px] w-full"
+        >
+          <div className="flex items-center justify-between mb-1">
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">{index.symbol}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{index.name}</p>
+              <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
+                {index.symbol}
+              </h3>
+              <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                {index.name}
+              </p>
             </div>
-            <div className={`p-2 rounded-full ${getChangeBg(index.change)}`}>
+            <div className={`p-1 rounded-full ${getChangeBg(index.change)}`}>
               {getChangeIcon(index.change)}
             </div>
           </div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+
+          <div className="text-base font-semibold text-gray-900 dark:text-white">
             {index.price.toLocaleString()}
           </div>
-          <div className="flex items-center space-x-2">
-            <span className={`text-sm font-medium ${getChangeColor(index.change)}`}>
-              {index.change >= 0 ? '+' : ''}{index.change.toFixed(2)}
+
+          <div className="mt-0.5 flex items-center space-x-1 text-[12px]">
+            <span className={getChangeColor(index.change)}>
+              {index.change >= 0 ? '+' : ''}
+              {index.change.toFixed(2)}
             </span>
-            <span className={`text-sm font-medium ${getChangeColor(index.change)}`}>
+            <span className={getChangeColor(index.change)}>
               ({index.changePercent >= 0 ? '+' : ''}{index.changePercent.toFixed(2)}%)
             </span>
-          </div>
-          <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-            Vol: {formatNumber(index.volume)}
           </div>
         </div>
       ))}
     </div>
-  )
+  </div>
+)
 
-  const renderSectors = () => (
-    <div className="space-y-4">
-      {marketData.sectors.map((sector, index) => (
-        <div key={index} className="card p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-gray-900 dark:text-white">{sector.name}</h3>
-            <div className="flex items-center space-x-2">
-              <span className={`text-sm font-medium ${getChangeColor(sector.change)}`}>
-                {sector.change >= 0 ? '+' : ''}{sector.change.toFixed(2)}
-              </span>
-              <span className={`text-sm font-medium ${getChangeColor(sector.change)}`}>
-                ({sector.changePercent >= 0 ? '+' : ''}{sector.changePercent.toFixed(2)}%)
-              </span>
+
+
+
+
+  // MAIN TICKERS ROW (where indices used to be originally)
+  const renderPrimaryTickers = () => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      {marketData.primaryTickers.map((ticker) => (
+        <div key={ticker.symbol} className="card p-4">
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white">
+                {ticker.symbol}
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {ticker.name}
+              </p>
+            </div>
+            <div className={`p-2 rounded-full ${getChangeBg(ticker.change)}`}>
+              {getChangeIcon(ticker.change)}
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h4 className="text-sm font-medium text-green-600 dark:text-green-400 mb-2">Top Gainers</h4>
-              <div className="flex space-x-2">
-                {sector.topGainers.map((symbol) => (
-                  <span key={symbol} className="text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded">
-                    {symbol}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-red-600 dark:text-red-400 mb-2">Top Losers</h4>
-              <div className="flex space-x-2">
-                {sector.topLosers.map((symbol) => (
-                  <span key={symbol} className="text-xs bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-2 py-1 rounded">
-                    {symbol}
-                  </span>
-                ))}
-              </div>
-            </div>
+          <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+            {ticker.price.toLocaleString()}
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className={`text-sm font-medium ${getChangeColor(ticker.change)}`}>
+              {ticker.change >= 0 ? '+' : ''}
+              {ticker.change.toFixed(2)}
+            </span>
+            <span className={`text-sm font-medium ${getChangeColor(ticker.change)}`}>
+              ({ticker.changePercent >= 0 ? '+' : ''}
+              {ticker.changePercent.toFixed(2)}%)
+            </span>
+          </div>
+          <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+            Vol: {formatNumber(ticker.volume)}
           </div>
         </div>
       ))}
@@ -344,121 +424,47 @@ export const MarketOverview = () => {
     </div>
   )
 
-  const renderGlobalMarkets = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {marketData.globalMarkets.map((market, index) => (
-        <div key={index} className="card p-4">
-          <div className="flex items-center justify-between mb-2">
-            <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">{market.name}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{market.index}</p>
-            </div>
-            <div className={`p-2 rounded-full ${getChangeBg(market.change)}`}>
-              {getChangeIcon(market.change)}
-            </div>
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className={`text-sm font-medium ${getChangeColor(market.change)}`}>
-              {market.change >= 0 ? '+' : ''}{market.change.toFixed(2)}
-            </span>
-            <span className={`text-sm font-medium ${getChangeColor(market.change)}`}>
-              ({market.changePercent >= 0 ? '+' : ''}{market.changePercent.toFixed(2)}%)
-            </span>
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-
-  const renderCrypto = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {marketData.crypto.map((crypto, index) => (
-        <div key={index} className="card p-4">
-          <div className="flex items-center justify-between mb-2">
-            <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">{crypto.symbol}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{crypto.name}</p>
-            </div>
-            <div className={`p-2 rounded-full ${getChangeBg(crypto.change)}`}>
-              {getChangeIcon(crypto.change)}
-            </div>
-          </div>
-          <div className="text-xl font-bold text-gray-900 dark:text-white mb-1">
-            ${crypto.price.toLocaleString()}
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className={`text-sm font-medium ${getChangeColor(crypto.change)}`}>
-              {crypto.change >= 0 ? '+' : ''}{crypto.change.toFixed(2)}
-            </span>
-            <span className={`text-sm font-medium ${getChangeColor(crypto.change)}`}>
-              ({crypto.changePercent >= 0 ? '+' : ''}{crypto.changePercent.toFixed(2)}%)
-            </span>
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-
-  const renderCommodities = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {marketData.commodities.map((commodity, index) => (
-        <div key={index} className="card p-4">
-          <div className="flex items-center justify-between mb-2">
-            <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">{commodity.name}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{commodity.unit}</p>
-            </div>
-            <div className={`p-2 rounded-full ${getChangeBg(commodity.change)}`}>
-              {getChangeIcon(commodity.change)}
-            </div>
-          </div>
-          <div className="text-xl font-bold text-gray-900 dark:text-white mb-1">
-            ${commodity.price.toFixed(2)}
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className={`text-sm font-medium ${getChangeColor(commodity.change)}`}>
-              {commodity.change >= 0 ? '+' : ''}{commodity.change.toFixed(2)}
-            </span>
-            <span className={`text-sm font-medium ${getChangeColor(commodity.change)}`}>
-              ({commodity.changePercent >= 0 ? '+' : ''}{commodity.changePercent.toFixed(2)}%)
-            </span>
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Market Overview
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            Real-time market data and analysis
-          </p>
+      {/* HEADER + INDICES ON TOP RIGHT */}
+      <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+        <div className="flex-1 space-y-2">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                Market Overview
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                Real-time market data and analysis
+              </p>
+            </div>
+            <select
+              value={timeframe}
+              onChange={(e) => setTimeframe(e.target.value as any)}
+              className="input w-28"
+            >
+              <option value="1D">1 Day</option>
+              <option value="1W">1 Week</option>
+              <option value="1M">1 Month</option>
+              <option value="3M">3 Months</option>
+              <option value="1Y">1 Year</option>
+            </select>
+          </div>
         </div>
-        <div className="flex items-center space-x-4">
-          <select
-            value={timeframe}
-            onChange={(e) => setTimeframe(e.target.value as any)}
-            className="input"
-          >
-            <option value="1D">1 Day</option>
-            <option value="1W">1 Week</option>
-            <option value="1M">1 Month</option>
-            <option value="3M">3 Months</option>
-            <option value="1Y">1 Year</option>
-          </select>
+
+        {/* 4 INDEX CARDS IN TOP-RIGHT */}
+        <div className="w-full lg:max-w-xl">
+          {renderIndicesTop()}
         </div>
       </div>
 
-      {/* Content - Only showing Indices */}
+      {/* MAIN 5 TICKERS ROW */}
       <div>
-        {renderIndices()}
+        {renderPrimaryTickers()}
       </div>
+
+      {/* (Optional) Movers section if you want to show it under the tickers later */}
+      {/* <div>{renderMarketMovers()}</div> */}
     </div>
   )
 }

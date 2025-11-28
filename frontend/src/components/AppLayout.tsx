@@ -35,6 +35,12 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
     { name: 'Alerts', href: '/alerts', icon: Bell },
   ]
 
+  // Make the market page wider / full-width
+  const isMarketPage = location.pathname.startsWith('/market')
+  const mainWidthClass = isMarketPage
+    ? 'w-full max-w-none'     // use the whole available width
+    : 'max-w-7xl'             // default for other pages
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       {/* Fixed navbar at the top */}
@@ -57,7 +63,9 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
 
         {/* MAIN CONTENT (never under the sidebar) */}
         <main className="flex-1 px-6 py-6 overflow-y-auto">
-          <div className="mx-auto max-w-7xl">{children}</div>
+          <div className={`mx-auto ${mainWidthClass}`}>
+            {children}
+          </div>
         </main>
       </div>
 
