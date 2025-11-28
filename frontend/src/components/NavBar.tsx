@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { Sun, Moon, LogOut, User } from 'lucide-react'
 import { NotificationCenter } from './NotificationCenter'
 import type { User as UserType } from '@/types'
+import lightLogo from '@/assets/bird_lightmode.png'
+import darkLogo from '@/assets/bird_darkmode.png'
+
 
 interface NavBarProps {
   user: UserType | null
@@ -53,21 +56,18 @@ export const NavBar = ({ user, onLogout }: NavBarProps) => {
           <div className="flex items-center justify-center w-10 h-10 rounded-xl">
   {/* Light mode logo */}
   <img
-    src="/images/bird_lightmode.png"
+    src={lightLogo}
     alt="Feather"
     className="h-8 w-auto dark:hidden"
   />
 
   {/* Dark mode logo */}
   <img
-    src="/images/bird_darkmode.png"
+    src={darkLogo}
     alt="Feather"
     className="h-8 w-auto hidden dark:block"
   />
 </div>
-
-
-
           <div className="flex flex-col">
             <span className="text-xl font-bold text-gray-700 dark:text-gray-300">
               Feather
