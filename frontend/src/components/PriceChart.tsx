@@ -1,5 +1,6 @@
+// src/components/PriceChart.tsx
 import { useState, useEffect } from 'react'
-import { TrendingUp, TrendingDown, Activity } from 'lucide-react'
+import { TrendingUp, TrendingDown } from 'lucide-react'
 
 interface PriceChartProps {
   symbol: string
@@ -15,9 +16,9 @@ interface PriceChartProps {
 }
 
 export const PriceChart = ({ symbol, data, isLoading }: PriceChartProps) => {
-  const [timeframe, setTimeframe] = useState<'1D' | '1W' | '1M' | '3M' | '1Y'>('1D')
-  
-  // ----- SAFE NUMERIC VALUES -----
+  const [timeframe, setTimeframe] =
+    useState<'1D' | '1W' | '1M' | '3M' | '1Y'>('1D')
+
   const rawPrice = data?.price ?? 150.25
   const rawChange = data?.change ?? 2.45
   const rawChangePercent = data?.changePercent ?? 1.66
@@ -37,7 +38,6 @@ export const PriceChart = ({ symbol, data, isLoading }: PriceChartProps) => {
 
   const isPositive = change >= 0
 
-  // ----- MOCK CHART DATA (still fine for now) -----
   const generateMockData = (period: string) => {
     const points =
       period === '1D'
@@ -129,10 +129,6 @@ export const PriceChart = ({ symbol, data, isLoading }: PriceChartProps) => {
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <Activity className="h-4 w-4 text-gray-400" />
         </div>
       </div>
 

@@ -1,20 +1,19 @@
+// src/pages/ChartsPage.tsx
 import { useState } from 'react'
 import { TickerSearch } from '@/components/TickerSearch'
 import { PriceChart } from '@/components/PriceChart'
 import { InteractiveChart } from '@/components/InteractiveChart'
 import { usePriceHistory } from '@/hooks/useHistory'
 
+const QUICK_SYMBOLS = ['AAPL', 'AMZN', 'GOOGL', 'TSLA', 'MSFT'] as const
+
 export const ChartsPage = () => {
-  const [selectedSymbol, setSelectedSymbol] = useState('AAPL')
+  const [selectedSymbol, setSelectedSymbol] = useState<string>('AAPL')
 
   const { data: history, isLoading, error } = usePriceHistory(selectedSymbol, 60)
 
-  // Raw candles from API (Neon via backend)
   const rawCandles = history?.items ?? []
 
-  // ✅ Ensure candles are sorted oldest -> newest so:
-  // - left side of chart = earliest
-  // - right side of chart = latest
   const candles = [...rawCandles].sort((a, b) => {
     const ta =
       typeof a.timestamp === 'number'
@@ -31,12 +30,10 @@ export const ChartsPage = () => {
 
   const hasData = candles.length > 0
 
-  // Map backend -> InteractiveChart shape
   const chartData = candles.map((candle) => {
     let tsMs: number
 
     if (typeof candle.timestamp === 'number') {
-      // Neon bigint seconds → ms
       tsMs = candle.timestamp * 1000
     } else {
       const parsed = Date.parse(candle.timestamp)
@@ -54,16 +51,35 @@ export const ChartsPage = () => {
     }
   })
 
-  const last = hasData ? candles[candles.length - 1] : undefined   // newest
-  const first = hasData ? candles[0] : undefined                    // oldest
+  const last = hasData ? candles[candles.length - 1] : undefined
+  const first = hasData ? candles[0] : undefined
 
   return (
     <div className="space-y-6">
       {/* Symbol selection */}
-      <div className="card p-6">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+      <div className="card p-6 space-y-4">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
           Select Symbol
         </h2>
+
+        {/* Quick buttons for core tickers incl. MSFT */}
+        <div className="flex flex-wrap gap-2">
+          {QUICK_SYMBOLS.map((sym) => (
+            <button
+              key={sym}
+              onClick={() => setSelectedSymbol(sym)}
+              className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${
+                selectedSymbol === sym
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+              }`}
+            >
+              {sym}
+            </button>
+          ))}
+        </div>
+
+        {/* Search box (still lets you pick any other symbol) */}
         <div className="max-w-md">
           <TickerSearch
             onSelect={setSelectedSymbol}
@@ -72,7 +88,6 @@ export const ChartsPage = () => {
         </div>
       </div>
 
-      {/* Loading / error states */}
       {isLoading && (
         <div className="card p-6">
           <p className="text-gray-500 dark:text-gray-400">
@@ -89,14 +104,12 @@ export const ChartsPage = () => {
         </div>
       )}
 
-      {/* Only show charts when we *actually* have candles */}
       {hasData && last && first && (
         <>
-          {/* Summary card powered by real candles */}
           <PriceChart
             symbol={selectedSymbol}
             data={{
-              price: last.close,  // latest close
+              price: last.close,
               change: last.close - first.close,
               changePercent: ((last.close - first.close) / first.close) * 100,
               volume: last.volume,
@@ -106,7 +119,6 @@ export const ChartsPage = () => {
             isLoading={isLoading}
           />
 
-          {/* Real OHLCV chart with candles + indicators */}
           <InteractiveChart
             symbol={selectedSymbol}
             data={chartData}
@@ -117,7 +129,6 @@ export const ChartsPage = () => {
         </>
       )}
 
-      {/* Optional: if not loading and no data, show a friendly message */}
       {!isLoading && !error && !hasData && (
         <div className="card p-6">
           <p className="text-gray-500 dark:text-gray-400">
