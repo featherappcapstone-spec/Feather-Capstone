@@ -32,11 +32,29 @@ export type ScreenerResponse = {
   total: number
 }
 
+// ----------------------------------------
+// Market Quotes (Neon + Alpha Vantage)
+// ----------------------------------------
+export type MarketQuote = {
+  ticker: string
+  company_name: string
+  last_price: number | null
+  price_change: number | null
+  percent_change: number | null
+  volume: number | null
+  high: number | null
+  low: number | null
+  open: number | null
+  prev_close: number | null
+  updated_at: string | null
+}
+
 // ================================================
 // Base URL Setup
 // ================================================
 const API_BASE_URL =
-  (import.meta as any).env?.VITE_API_BASE_URL || 'https://feather-backend-766687704820.northamerica-northeast1.run.app'
+  (import.meta as any).env?.VITE_API_BASE_URL ||
+  'https://feather-backend-766687704820.northamerica-northeast1.run.app'
 
 console.log('API Base URL:', API_BASE_URL)
 
@@ -161,13 +179,12 @@ export const tickerApi = {
     }
   },
 
-  // ✅ NEW: GET QUOTE
+  // ✅ GET QUOTE
   getQuote: async (symbol: string): Promise<Quote> => {
     const res = await api.get<Quote>(`/api/stocks/${symbol}/quote`)
     return res.data
   },
 }
-
 
 // ================================================
 // NEWS API
@@ -261,6 +278,12 @@ export const alertsApi = {
 export const systemApi = {
   health: async (): Promise<any> => {
     const res = await api.get('/api/health')
+    return res.data
+  },
+
+  // ✅ NEW: Market quotes from Neon
+  marketQuotes: async (): Promise<{ quotes: MarketQuote[] }> => {
+    const res = await api.get<{ quotes: MarketQuote[] }>('/api/market/quotes')
     return res.data
   },
 }
