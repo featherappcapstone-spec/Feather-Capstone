@@ -1,9 +1,8 @@
-// src/pages/ChartsPage.tsx
 import { useState } from 'react'
 import { TickerSearch } from '@/components/TickerSearch'
 import { PriceChart } from '@/components/PriceChart'
-import { InteractiveChart } from '@/components/InteractiveChart'
 import { usePriceHistory } from '@/hooks/useHistory'
+import { LegacyCandleChart } from '@/components/LegacyCandleChart'
 
 const QUICK_SYMBOLS = ['AAPL', 'AMZN', 'GOOGL', 'TSLA', 'MSFT'] as const
 
@@ -14,55 +13,31 @@ export const ChartsPage = () => {
 
   const rawCandles = history?.items ?? []
 
+  // sort them oldest → newest, but keep the same fields
   const candles = [...rawCandles].sort((a, b) => {
     const ta =
       typeof a.timestamp === 'number'
         ? a.timestamp
         : Date.parse(a.timestamp) / 1000
-
     const tb =
       typeof b.timestamp === 'number'
         ? b.timestamp
         : Date.parse(b.timestamp) / 1000
-
     return ta - tb
   })
 
   const hasData = candles.length > 0
-
-  const chartData = candles.map((candle) => {
-    let tsMs: number
-
-    if (typeof candle.timestamp === 'number') {
-      tsMs = candle.timestamp * 1000
-    } else {
-      const parsed = Date.parse(candle.timestamp)
-      tsMs = Number.isNaN(parsed) ? Date.now() : parsed
-    }
-
-    return {
-      time: new Date(tsMs).toISOString(),
-      price: candle.close,
-      volume: candle.volume,
-      high: candle.high,
-      low: candle.low,
-      open: candle.open,
-      close: candle.close,
-    }
-  })
-
   const last = hasData ? candles[candles.length - 1] : undefined
   const first = hasData ? candles[0] : undefined
 
   return (
     <div className="space-y-6">
-      {/* Symbol selection */}
+      {/* Symbol selection card – unchanged */}
       <div className="card p-6 space-y-4">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
           Select Symbol
         </h2>
 
-        {/* Quick buttons for core tickers incl. MSFT */}
         <div className="flex flex-wrap gap-2">
           {QUICK_SYMBOLS.map((sym) => (
             <button
@@ -79,7 +54,6 @@ export const ChartsPage = () => {
           ))}
         </div>
 
-        {/* Search box (still lets you pick any other symbol) */}
         <div className="max-w-md">
           <TickerSearch
             onSelect={setSelectedSymbol}
@@ -106,12 +80,14 @@ export const ChartsPage = () => {
 
       {hasData && last && first && (
         <>
+          {/* Same summary chart as before */}
           <PriceChart
             symbol={selectedSymbol}
             data={{
               price: last.close,
               change: last.close - first.close,
-              changePercent: ((last.close - first.close) / first.close) * 100,
+              changePercent:
+                ((last.close - first.close) / first.close) * 100,
               volume: last.volume,
               high: Math.max(...candles.map((c) => c.high)),
               low: Math.min(...candles.map((c) => c.low)),
@@ -119,12 +95,11 @@ export const ChartsPage = () => {
             isLoading={isLoading}
           />
 
-          <InteractiveChart
+          {/* 🔥 NEW JS candlestick – using THE SAME candles from the backend */}
+          <LegacyCandleChart
             symbol={selectedSymbol}
-            data={chartData}
-            type="candlestick"
-            showIndicators={true}
-            showCrosshair={true}
+            data={candles}   // ← this is history.items sorted
+            height={500}
           />
         </>
       )}
