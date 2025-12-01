@@ -272,45 +272,67 @@ export const MarketOverview = () => {
   // ---------------- RENDER INDICES (LIVE) ----------------
   const renderIndicesTop = () => (
     <div className="flex justify-end">
-      <div className="grid grid-cols-[repeat(2,min-content)] gap-1">
-        {indices.map((index) => {
-          const change = Number(index.change ?? 0)
-          const changePercent = Number(index.changePercent ?? 0)
+      <div className="flex items-start gap-3">
+        {/* Timeframe selector now sits directly to the left of the indices */}
+        <select
+          value={timeframe}
+          onChange={(e) => setTimeframe(e.target.value as any)}
+          className="input w-28 h-10"
+        >
+          <option value="1D">1 Day</option>
+          <option value="1W">1 Week</option>
+          <option value="1M">1 Month</option>
+          <option value="3M">3 Months</option>
+          <option value="1Y">1 Year</option>
+        </select>
 
-          return (
-            <div key={index.symbol} className="card p-2.5 max-w-[170px] w-full">
-              <div className="flex items-center justify-between mb-1">
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
-                    {index.symbol}
-                  </h3>
-                  <p className="text-[11px] text-gray-500 dark:text-gray-400">{index.name}</p>
+        {/* SMALLER, SUBTLE INDEX CARDS (TOP-RIGHT) */}
+        <div className="grid grid-cols-2 gap-1">
+          {indices.map((index) => {
+            const change = Number(index.change ?? 0)
+            const changePercent = Number(index.changePercent ?? 0)
+
+            return (
+              <div
+                key={index.symbol}
+                className="card p-2.5 max-w-[170px] w-full"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <div>
+                    <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
+                      {index.symbol}
+                    </h3>
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                      {index.name}
+                    </p>
+                  </div>
+                  <div className={`p-1 rounded-full ${getChangeBg(change)}`}>
+                    {getChangeIcon(change)}
+                  </div>
                 </div>
-                <div className={`p-1 rounded-full ${getChangeBg(change)}`}>
-                  {getChangeIcon(change)}
+
+                <div className="text-base font-semibold text-gray-900 dark:text-white">
+                  {index.price.toLocaleString()}
+                </div>
+
+                <div className="mt-0.5 flex items-center space-x-1 text-[12px]">
+                  <span className={getChangeColor(change)}>
+                    {change >= 0 ? '+' : ''}
+                    {change.toFixed(2)}
+                  </span>
+                  <span className={getChangeColor(change)}>
+                    ({changePercent >= 0 ? '+' : ''}
+                    {changePercent.toFixed(2)}%)
+                  </span>
                 </div>
               </div>
-
-              <div className="text-base font-semibold text-gray-900 dark:text-white">
-                {index.price.toLocaleString()}
-              </div>
-
-              <div className="mt-0.5 flex items-center space-x-1 text-[12px]">
-                <span className={getChangeColor(change)}>
-                  {change >= 0 ? '+' : ''}
-                  {change.toFixed(2)}
-                </span>
-                <span className={getChangeColor(change)}>
-                  ({changePercent >= 0 ? '+' : ''}
-                  {changePercent.toFixed(2)}%)
-                </span>
-              </div>
-            </div>
-          )
-        })}
+            )
+          })}
+        </div>
       </div>
     </div>
   )
+
 
   // ---------------- RENDER PRIMARY TICKERS ----------------
   const renderPrimaryTickers = () => (
@@ -380,31 +402,14 @@ export const MarketOverview = () => {
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
         <div className="flex-1 space-y-2">
           <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Market Overview
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Real-time market data and analysis
-              </p>
-            </div>
-
-            <select
-              value={timeframe}
-              onChange={(e) => setTimeframe(e.target.value as any)}
-              className="input w-28"
-            >
-              <option value="1D">1 Day</option>
-              <option value="1W">1 Week</option>
-              <option value="1M">1 Month</option>
-              <option value="3M">3 Months</option>
-              <option value="1Y">1 Year</option>
-            </select>
           </div>
         </div>
 
-        <div className="w-full lg:max-w-xl">{renderIndicesTop()}</div>
+        <div className="w-full lg:max-w-xl">
+          {renderIndicesTop()}
+        </div>
       </div>
+
 
       <div>{renderPrimaryTickers()}</div>
     </div>

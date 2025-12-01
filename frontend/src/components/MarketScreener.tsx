@@ -163,7 +163,7 @@ export const MarketScreener = () => {
             Market Screener
           </h2>
           <p className="text-gray-600 dark:text-gray-400">
-            Discover stocks with advanced filtering and AI predictions
+            Discover stocks with advanced filtering
           </p>
         </div>
         <div className="flex items-center space-x-2">

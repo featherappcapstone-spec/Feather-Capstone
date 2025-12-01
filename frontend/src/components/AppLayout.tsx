@@ -1,3 +1,4 @@
+// src/components/AppLayout.tsx
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { NavBar } from './NavBar'
@@ -13,6 +14,7 @@ import {
   LineChart,
   Newspaper,
   Bell,
+  Settings,
 } from 'lucide-react'
 
 interface AppLayoutProps {
@@ -35,41 +37,51 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
     { name: 'Alerts', href: '/alerts', icon: Bell },
   ]
 
-  // Make the market page wider / full-width
+  const settingsItem = {
+    name: 'Settings',
+    href: '/settings',
+    icon: Settings,
+  }
+
+  const mobileNavigation = [...navigation, settingsItem]
+
   const isMarketPage = location.pathname.startsWith('/market')
-  const mainWidthClass = isMarketPage
-    ? 'w-full max-w-none'     // use the whole available width
-    : 'max-w-7xl'             // default for other pages
+  const mainWidthClass = isMarketPage ? 'w-full max-w-none' : 'max-w-7xl'
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-      {/* Fixed navbar at the top */}
       <NavBar user={user} onLogout={logout} />
 
-      {/* Everything below the navbar */}
       <div className="flex flex-1 pt-16 bg-gray-50 dark:bg-gray-900">
-        {/* DESKTOP SIDEBAR */}
-        <div
-          className="hidden lg:flex lg:flex-col"
-          onMouseEnter={() => setSidebarHovered(true)}
-          onMouseLeave={() => setSidebarHovered(false)}
-        >
-          <Sidebar
-            navigation={navigation}
-            currentPath={location.pathname}
-            expanded={sidebarHovered}
-          />
+        {/* DESKTOP SIDEBAR (fixed, hover-expand) */}
+        <div className="hidden lg:block">
+          <div
+            className="fixed top-16 bottom-0 left-0 z-40"
+            onMouseEnter={() => setSidebarHovered(true)}
+            onMouseLeave={() => setSidebarHovered(false)}
+          >
+            <Sidebar
+              navigation={navigation}
+              settingsItem={settingsItem}
+              currentPath={location.pathname}
+              expanded={sidebarHovered}
+            />
+          </div>
         </div>
 
-        {/* MAIN CONTENT (never under the sidebar) */}
-        <main className="flex-1 px-6 py-6 overflow-y-auto">
-          <div className={`mx-auto ${mainWidthClass}`}>
-            {children}
-          </div>
+        {/* MAIN CONTENT – margin changes with hover so nothing is under sidebar */}
+        <main
+          className={`
+            flex-1 px-6 py-6 overflow-y-auto
+            transition-all duration-300
+            ${sidebarHovered ? 'lg:ml-64' : 'lg:ml-16'}
+          `}
+        >
+          <div className={`mx-auto ${mainWidthClass}`}>{children}</div>
         </main>
       </div>
 
-      {/* MOBILE SIDEBAR OVERLAY */}
+      {/* MOBILE SIDEBAR OVERLAY (unchanged except Settings added) */}
       <div
         className={`fixed inset-0 z-50 lg:hidden ${
           sidebarOpen ? 'block' : 'hidden'
@@ -93,7 +105,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
           </div>
 
           <nav className="flex-1 space-y-1 px-2 py-4">
-            {navigation.map((item) => (
+            {mobileNavigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}

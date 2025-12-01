@@ -1,28 +1,38 @@
+// src/components/Sidebar.tsx
 import { Link } from 'react-router-dom'
 import type { LucideIcon } from 'lucide-react'
 
+interface NavItem {
+  name: string
+  href: string
+  icon: LucideIcon
+}
+
 interface SidebarProps {
-  navigation: Array<{
-    name: string
-    href: string
-    icon: LucideIcon
-  }>
+  navigation: NavItem[]
+  settingsItem: NavItem
   currentPath: string
   expanded?: boolean
 }
 
-export const Sidebar = ({ navigation, currentPath, expanded = false }: SidebarProps) => {
+export const Sidebar = ({
+  navigation,
+  settingsItem,
+  currentPath,
+  expanded = false,
+}: SidebarProps) => {
   return (
     <div
       className={`
-        flex flex-col h-full 
-        bg-gray-800 dark:bg-gray-900 
+        flex flex-col h-full
+        bg-gray-800 dark:bg-gray-900
         border-r border-gray-700 dark:border-gray-800
         transition-all duration-300
         overflow-hidden
-        ${expanded ? 'w-64' : 'w-16'}
+        ${expanded ? 'w-64' : 'w-16'}   /* ✅ shrink / expand on hover */
       `}
     >
+      {/* MAIN NAV ITEMS */}
       <nav className="flex-1 space-y-1 px-2 py-4">
         {navigation.map((item) => {
           const Icon = item.icon
@@ -33,22 +43,70 @@ export const Sidebar = ({ navigation, currentPath, expanded = false }: SidebarPr
               key={item.name}
               to={item.href}
               className={`
-                group flex items-center 
-                px-3 py-3 text-sm font-medium 
+                group flex items-center
+                px-3 py-3 text-sm font-medium
                 rounded-md transition-all duration-200
-                ${isActive
-                  ? 'bg-primary-600 text-white'
-                  : 'text-gray-300 hover:bg-gray-700 hover:text-white'}
+                ${
+                  isActive
+                    ? 'bg-primary-600 text-white'
+                    : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                }
                 ${expanded ? 'justify-start' : 'justify-center'}
               `}
               title={expanded ? undefined : item.name}
             >
-              <Icon className={`h-5 w-5 flex-shrink-0 ${expanded ? 'mr-3' : ''}`} />
-              {expanded && <span className="flex-1 whitespace-nowrap">{item.name}</span>}
+              <Icon
+                className={`h-5 w-5 flex-shrink-0 ${
+                  expanded ? 'mr-3' : ''
+                }`}
+              />
+              {expanded && (
+                <span className="flex-1 whitespace-nowrap">
+                  {item.name}
+                </span>
+              )}
             </Link>
           )
         })}
       </nav>
+
+      {/* BOTTOM SETTINGS ITEM */}
+      <div className="border-t border-gray-700 dark:border-gray-800 px-2 py-3">
+        {(() => {
+          const item = settingsItem
+          const Icon = item.icon
+          const isActive = currentPath === item.href
+
+          return (
+            <Link
+              to={item.href}
+              className={`
+                group flex items-center
+                px-3 py-3 text-sm font-medium
+                rounded-md transition-all duration-200
+                ${
+                  isActive
+                    ? 'bg-primary-600 text-white'
+                    : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                }
+                ${expanded ? 'justify-start' : 'justify-center'}
+              `}
+              title={expanded ? undefined : item.name}
+            >
+              <Icon
+                className={`h-5 w-5 flex-shrink-0 ${
+                  expanded ? 'mr-3' : ''
+                }`}
+              />
+              {expanded && (
+                <span className="flex-1 whitespace-nowrap">
+                  {item.name}
+                </span>
+              )}
+            </Link>
+          )
+        })()}
+      </div>
     </div>
   )
 }

@@ -21,8 +21,9 @@ export const MarketPage = () => {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Market / Screener
+          Market Statistics
         </h1>
+        {/* Description kept once here */}
         <p className="mt-2 text-gray-600 dark:text-gray-400">
           Real-time market data, indices, sectors, and a simple screener.
         </p>
@@ -33,11 +34,8 @@ export const MarketPage = () => {
         <MarketOverview />
       </section>
 
-      {/* Screener just under Market */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-          Screener
-        </h2>
+      {/* Screener directly below, no extra titles */}
+      <section>
         <MarketScreener />
       </section>
     </div>

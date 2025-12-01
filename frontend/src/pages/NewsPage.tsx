@@ -1,10 +1,9 @@
 // src/pages/NewsPage.tsx
 import { useState } from 'react'
-import { Filter } from 'lucide-react'
 import { useGlobalNews } from '@/hooks/useNews'
 import { NewsList } from '@/components/NewsList'
 import { TickerSearch } from '@/components/TickerSearch'
-import { useQuote } from '@/hooks/useQuote'              
+import { useQuote } from '@/hooks/useQuote'
 import { formatCurrency, formatPercentage } from '@/lib/utils'
 
 export const NewsPage = () => {
@@ -41,14 +40,10 @@ export const NewsPage = () => {
 
       {/* Filters */}
       <div className="card p-6">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center mb-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
             Filter News
           </h2>
-          <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-            <Filter className="h-4 w-4" />
-            <span>Advanced filtering</span>
-          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -114,9 +109,13 @@ export const NewsPage = () => {
             {/* 🔹 Quote stats */}
             {selectedSymbol && (
               <div className="mt-2">
-                {isQuoteLoading && <div className="animate-pulse">Loading quote…</div>}
+                {isQuoteLoading && (
+                  <div className="animate-pulse">Loading quote…</div>
+                )}
                 {quoteError && (
-                  <div className="text-red-500">Quote unavailable for {selectedSymbol}</div>
+                  <div className="text-red-500">
+                    Quote unavailable for {selectedSymbol}
+                  </div>
                 )}
                 {quote && !isQuoteLoading && !quoteError && (
                   <div className="text-xs text-gray-500 dark:text-gray-400">
