@@ -200,10 +200,13 @@ export const MarketOverview = () => {
   const [loadingTickers, setLoadingTickers] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
 
-  // ---------------- FETCHING LIVE DATA ----------------
+  // ---------------- FETCHING LIVE DATA + AUTO REFRESH ----------------
   useEffect(() => {
+    let isMounted = true
+
     const fetchRealTickers = async () => {
       try {
+        if (!isMounted) return
         setLoadingTickers(true)
 
         const data = await systemApi.marketQuotes()
@@ -240,19 +243,37 @@ export const MarketOverview = () => {
             return { ...m, symbol: meta.symbol, name: meta.name }
           })
 
+        if (!isMounted) return
+
         if (primary.length > 0) setPrimaryTickers(primary)
         if (indicesFromApi.length > 0) setIndices(indicesFromApi)
 
         setLoadError(null)
       } catch (err) {
         console.error(err)
-        setLoadError('Failed to load live market data.')
+        if (isMounted) {
+          setLoadError('Failed to load live market data.')
+        }
       } finally {
-        setLoadingTickers(false)
+        if (isMounted) {
+          setLoadingTickers(false)
+        }
       }
     }
 
+    // initial fetch
     fetchRealTickers()
+
+    // auto-refresh every 15 minutes (900,000 ms)
+    const intervalId = window.setInterval(() => {
+      fetchRealTickers()
+    }, 15 * 60 * 1000)
+
+    // cleanup on unmount
+    return () => {
+      isMounted = false
+      clearInterval(intervalId)
+    }
   }, [])
 
   // ---------------- HELPERS ----------------
@@ -333,7 +354,6 @@ export const MarketOverview = () => {
     </div>
   )
 
-
   // ---------------- RENDER PRIMARY TICKERS ----------------
   const renderPrimaryTickers = () => (
     <div className="space-y-2">
@@ -401,15 +421,13 @@ export const MarketOverview = () => {
     <div className="space-y-6">
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
         <div className="flex-1 space-y-2">
-          <div className="flex items-center justify-between">
-          </div>
+          <div className="flex items-center justify-between">{/* Reserved for future header */}</div>
         </div>
 
         <div className="w-full lg:max-w-xl">
           {renderIndicesTop()}
         </div>
       </div>
-
 
       <div>{renderPrimaryTickers()}</div>
     </div>
