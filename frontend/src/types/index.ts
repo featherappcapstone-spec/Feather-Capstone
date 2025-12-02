@@ -28,7 +28,6 @@ export interface Prediction {
   horizonDays?: number       // maps horizon_days
 }
 
-
 // Price history types
 export interface PriceCandle {
   // extra fields we get back from Neon
@@ -51,7 +50,6 @@ export interface PriceHistoryResponse {
   symbol: string
   items: PriceCandle[]
 }
-
 
 export interface PredictionModel {
   type: string
@@ -76,18 +74,16 @@ export interface Quote {
 
 // News types
 export interface NewsItem {
-  id: string
+  id: number
   headline: string
   publishedAt: string
   url: string
-  sentiment: 'Positive' | 'Negative' | 'Neutral'
+  source: string
+  summary: string
+  ticker: string
+  sentiment: 'positive' | 'negative' | 'neutral'
   sentimentScore: number
-
-  // Optional backend fields
-  source?: string
-  summary?: string
 }
-
 
 export interface NewsResponse {
   symbol?: string

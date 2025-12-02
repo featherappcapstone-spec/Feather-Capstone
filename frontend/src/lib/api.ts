@@ -14,6 +14,7 @@ import type {
   PriceCandle,
   PriceHistoryResponse,
   Quote,
+  NewsItem,
 } from '@/types'
 
 // ----------------------------------------
@@ -135,8 +136,6 @@ export const authApi = {
 // TICKER API (Prediction + OHLCV History)
 // ================================================
 export const tickerApi = {
-  // existing getPrediction...
-
   getPrediction: async (symbol: string): Promise<PredictionResponse> => {
     const res = await api.get(`/api/stocks/${symbol}/prediction`)
     const raw: any = res.data
@@ -163,8 +162,6 @@ export const tickerApi = {
     }
   },
 
-  // existing getHistory...
-
   getHistory: async (
     symbol: string,
     limit = 60
@@ -190,38 +187,91 @@ export const tickerApi = {
 // NEWS API
 // ================================================
 type BackendNewsItem = {
-  title: string
-  summary: string
+  id: number
+  ticker: string | null
+  title?: string
+  summary?: string
+  content?: string
   url: string
-  source: string
+  source?: string
   published_at: string
+  sentiment?: string | null
+  sentiment_score?: number | null
 }
+
+// Helper: map backend row -> NewsItem used in the UI
+const mapBackendNewsItem = (
+  item: BackendNewsItem,
+  fallbackTicker?: string
+): NewsItem => {
+  const raw = (item.sentiment || 'neutral').toString().toLowerCase()
+
+  let sentiment: NewsItem['sentiment']
+  if (raw === 'positive') sentiment = 'positive'
+  else if (raw === 'negative') sentiment = 'negative'
+  else sentiment = 'neutral'
+
+  const score =
+    typeof item.sentiment_score === 'number' ? item.sentiment_score : 0
+
+  // 👉 Use a short, title-like string for the headline
+  const rawText =
+    item.title || item.summary || item.content || 'Untitled article'
+
+  const maxLen = 110
+  const headline =
+    rawText.length > maxLen
+      ? rawText.slice(0, maxLen).trimEnd() + '…'
+      : rawText
+
+  // Full text can live in summary if we ever want a preview later
+  const summary = item.summary || item.content || 'No summary available.'
+
+  return {
+    id: item.id,
+    headline,
+    publishedAt: item.published_at,
+    url: item.url,
+    source: item.source ?? 'Unknown',
+    summary,
+    ticker: item.ticker ?? fallbackTicker ?? '',
+    sentiment,
+    sentimentScore: score,
+  }
+}
+
 
 export const newsApi = {
   getSymbolNews: async (
     symbol: string,
     limit = 20
   ): Promise<NewsResponse> => {
-    const res = await api.get<BackendNewsItem[]>(`/api/stocks/${symbol}/news`, {
-      params: { limit },
-    })
+    const res = await api.get<BackendNewsItem[]>(
+      `/api/stocks/${symbol}/news`,
+      {
+        params: { limit },
+      }
+    )
 
-    const items = res.data.map((item, index) => ({
-      id: `${symbol}-${index}-${item.published_at}`,
-      headline: item.title,
-      publishedAt: item.published_at,
-      url: item.url,
-      source: item.source,
-      summary: item.summary,
-      sentiment: 'Neutral' as const,
-      sentimentScore: 0,
-    }))
+    const upper = symbol.toUpperCase()
+    const items: NewsItem[] = res.data.map((item) =>
+      mapBackendNewsItem(item, upper)
+    )
 
     return { items }
   },
 
+  // 🔹 Global news: backend route /api/news
   getGlobalNews: async (limit = 50): Promise<NewsResponse> => {
-    return newsApi.getSymbolNews('SPY', limit)
+    const res = await api.get<BackendNewsItem[]>(`/api/news`, {
+      params: { limit },
+    })
+
+    const items: NewsItem[] = res.data.map((item) =>
+      mapBackendNewsItem(item, item.ticker ?? undefined)
+    )
+
+    return { items }
   },
 }
 

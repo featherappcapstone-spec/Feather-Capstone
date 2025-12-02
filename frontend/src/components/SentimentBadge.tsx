@@ -1,9 +1,10 @@
+// src/components/SentimentBadge.tsx
 import { Diamond, Plus, Minus } from 'lucide-react'
 import type { NewsItem } from '@/types'
 
 interface SentimentBadgeProps {
   sentiment: NewsItem['sentiment']
-  score: number
+  score?: number
   size?: 'sm' | 'md' | 'lg'
 }
 
@@ -24,64 +25,85 @@ export const SentimentBadge = ({
     lg: 16,
   }
 
-  const sentimentConfig = {
-    Positive: {
+  const normalized =
+    (sentiment || 'neutral').toString().toLowerCase() as
+      | 'positive'
+      | 'negative'
+      | 'neutral'
+
+  const sentimentConfig: Record<
+    'positive' | 'negative' | 'neutral',
+    { bg: string; text: string; iconColor: string; label: string }
+  > = {
+    positive: {
       bg: 'bg-emerald-500/10 border border-emerald-500/30',
       text: 'text-emerald-400',
       iconColor: 'text-emerald-400',
+      label: 'Positive',
     },
-    Negative: {
+    negative: {
       bg: 'bg-red-500/10 border border-red-500/30',
       text: 'text-red-400',
       iconColor: 'text-red-400',
+      label: 'Negative',
     },
-    Neutral: {
-      // 🔵 blue neutral
+    neutral: {
       bg: 'bg-sky-500/10 border border-sky-500/30',
       text: 'text-sky-400',
       iconColor: 'text-sky-400',
+      label: 'Neutral',
     },
-  } as const
+  }
 
-  const config =
-    sentimentConfig[sentiment as keyof typeof sentimentConfig] ??
-    sentimentConfig.Neutral
-
+  const config = sentimentConfig[normalized]
   const sizeNum = iconSize[size]
 
   const IconComponent =
-    sentiment === 'Positive' ? (
-      <div className="relative">
+    normalized === 'positive' ? (
+      <div
+        className="relative flex items-center justify-center"
+        style={{ width: sizeNum + 4, height: sizeNum + 4 }}
+      >
         <Diamond size={sizeNum} className="text-current" />
         <Plus
           size={sizeNum * 0.6}
-          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${config.iconColor}`}
+          className={`absolute ${config.iconColor}`}
           strokeWidth={3}
         />
       </div>
-    ) : sentiment === 'Negative' ? (
-      <div className="relative">
+    ) : normalized === 'negative' ? (
+      <div
+        className="relative flex items-center justify-center"
+        style={{ width: sizeNum + 4, height: sizeNum + 4 }}
+      >
         <Diamond size={sizeNum} className="text-current" />
         <Minus
           size={sizeNum * 0.6}
-          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${config.iconColor}`}
+          className={`absolute ${config.iconColor}`}
           strokeWidth={3}
         />
       </div>
     ) : (
-      // Neutral → pure blue diamond
-      <Diamond size={sizeNum} className="text-current" />
+      <div
+        className="relative flex items-center justify-center"
+        style={{ width: sizeNum + 4, height: sizeNum + 4 }}
+      >
+        <Diamond size={sizeNum} className="text-current" />
+      </div>
     )
+
+  const scoreText =
+    typeof score === 'number'
+      ? `(${Math.round(score * 100)}%)`
+      : '(N/A)'
 
   return (
     <div
-      className={`inline-flex items-center gap-1.5 rounded-full font-medium ${sizeClasses[size]} ${config.bg} ${config.text}`}
+      className={`inline-flex items-center gap-2 rounded-full font-medium ${sizeClasses[size]} ${config.bg} ${config.text}`}
     >
       <span className="flex-shrink-0">{IconComponent}</span>
-      <span>{sentiment}</span>
-      <span className="opacity-75">
-        ({Math.round(score * 100)}%)
-      </span>
+      <span>{config.label}</span>
+      <span className="opacity-75">{scoreText}</span>
     </div>
   )
 }
